@@ -199,6 +199,106 @@ function test_dir_path_access
 }
 ################################################################
 
+# firstly, we test that the parameter we got is of the correct form for an absolute file | sanitised directory path 
+# if this test fails, there's no point doing anything further
+# 
+function test_file_path_valid_form
+{
+	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
+
+	test_result=
+	test_file_fullpath=$1
+	
+	#echo "test_file_fullpath is set to: $test_file_fullpath"
+	#echo "test_dir_fullpath is set to: $test_dir_fullpath"
+
+	if [[ $test_file_fullpath =~ $ABS_FILEPATH_FLEX_TB_REGEX ]]
+	then
+		#echo "THE FORM OF THE INCOMING PARAMETER IS OF A VALID ABSOLUTE FILE PATH"
+		test_result=0
+	else
+		echo "AN INCOMING PARAMETER WAS SET, BUT WAS NOT A MATCH FOR OUR KNOWN PATH FORM REGEX "$ABS_FILEPATH_FLEX_TB_REGEX"" && sleep 1 && echo
+		echo "Returning with a non-zero test result..."
+		test_result=1
+		return $E_UNEXPECTED_ARG_VALUE
+	fi 
+
+	#echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
+
+	return "$test_result"
+}
+
+################################################################
+
+# test for read access to file 
+# 
+function test_file_path_access
+{
+	echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
+
+	test_result=
+	test_file_fullpath=$1
+
+	echo "test_file_fullpath is set to: $test_file_fullpath"
+
+	# test for expected file type (regular) and read permission
+	if [ -f "$test_file_fullpath" ] && [ -r "$test_file_fullpath" ]
+	then
+		# test file found and accessible
+		echo "Test file found to be readable" && echo
+		test_result=0
+	else
+		# -> return due to failure of any of the above tests:
+		test_result=1 # just because...
+		echo "Returning from function \"${FUNCNAME[0]}\" with test result code: $E_REQUIRED_FILE_NOT_FOUND"
+		return $E_REQUIRED_FILE_NOT_FOUND
+	fi
+
+	echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
+
+	return "$test_result"
+}
+
+################################################################
+
+# give user option to leave if here in error:
+function get_user_permission_to_proceed(){
+
+	echo " Type q to quit program NOW, or press ENTER to continue."
+	echo && sleep 1
+
+	# TODO: if the shell level is -ge 2, called from another script so bypass this exit option
+	read last_chance
+	case $last_chance in 
+	[qQ])	echo
+				echo "Goodbye! Exiting now..."
+				exit 0 #
+				;;
+	*) 		echo "You're IN...Get busy!" && echo
+				;;
+	esac
+}
+
+################################################################
+
+# quick check that number of program arguments is within the valid range
+function check_no_of_program_args()
+{
+	#echo && echo "Entered into function ${FUNCNAME[0]}" && echo
+	
+	# establish that number of parameters is valid
+	if [ $actual_no_of_program_parameters -lt $min_expected_no_of_program_parameters -o \
+	$actual_no_of_program_parameters -gt $max_expected_no_of_program_parameters  ]
+	then
+		msg="Incorrect number of command line arguments. Exiting now..."
+		lib10k_exit_with_error "$E_INCORRECT_NUMBER_OF_ARGS" "$msg"
+	fi
+	
+	#echo && echo "Leaving from function ${FUNCNAME[0]}" && echo
+
+}
+
+################################################################
 
 
 
