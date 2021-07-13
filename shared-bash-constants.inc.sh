@@ -17,11 +17,11 @@ export E_UNKNOWN_ERROR=32
 
 
 # abs filepath with trailing / 
-ABS_FILEPATH_WITH_TB_REGEX='^(/{1}[A-Za-z0-9._~:@-]+)+(/){1}$' 
+ABS_FILEPATH_WITH_TS_REGEX='^(/{1}[A-Za-z0-9._~:@-]+)+(/){1}$' 
 # abs filepath without trailing / 
-ABS_FILEPATH_NO_TB_REGEX='^(/{1}[A-Za-z0-9._~:@-]+)+$' 
+ABS_FILEPATH_NO_TS_REGEX='^(/{1}[A-Za-z0-9._~:@-]+)+$' 
 # abs filepath with or without trailing / 
-ABS_FILEPATH_FLEX_TB_REGEX='^(/{1}[A-Za-z0-9._~:@-]+)+(/)?$'
+ABS_FILEPATH_FLEX_TS_REGEX='^(/{1}[A-Za-z0-9._~:@-]+)+(/)?$'
 #email regex
 EMAIL_REGEX='^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$'
 # ^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$

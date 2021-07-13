@@ -1,7 +1,4 @@
 #
-
-
-
 # set the environment variable in ~/.bashrc file on all hosts with :
 # export SHARED_LIBRARIES_DIR=$HOME/.local/share/lib10k
 
@@ -165,7 +162,7 @@ function make_rel_pathname()
 # 1. directory exists and is not cd-able
 # 2. neither of those, so directory does NOT exist
 # 
-function test_dir_path_access
+function test_dir_path_access()
 {
 	echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 
@@ -202,7 +199,7 @@ function test_dir_path_access
 # firstly, we test that the parameter we got is of the correct form for an absolute file | sanitised directory path 
 # if this test fails, there's no point doing anything further
 # 
-function test_file_path_valid_form
+function test_file_path_valid_form()
 {
 	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 
@@ -212,12 +209,12 @@ function test_file_path_valid_form
 	#echo "test_file_fullpath is set to: $test_file_fullpath"
 	#echo "test_dir_fullpath is set to: $test_dir_fullpath"
 
-	if [[ $test_file_fullpath =~ $ABS_FILEPATH_FLEX_TB_REGEX ]]
+	if [[ $test_file_fullpath =~ $ABS_FILEPATH_FLEX_TS_REGEX ]]
 	then
 		#echo "THE FORM OF THE INCOMING PARAMETER IS OF A VALID ABSOLUTE FILE PATH"
 		test_result=0
 	else
-		echo "AN INCOMING PARAMETER WAS SET, BUT WAS NOT A MATCH FOR OUR KNOWN PATH FORM REGEX "$ABS_FILEPATH_FLEX_TB_REGEX"" && sleep 1 && echo
+		echo "AN INCOMING PARAMETER WAS SET, BUT WAS NOT A MATCH FOR OUR KNOWN PATH FORM REGEX "$ABS_FILEPATH_FLEX_TS_REGEX"" && sleep 1 && echo
 		echo "Returning with a non-zero test result..."
 		test_result=1
 		return $E_UNEXPECTED_ARG_VALUE
@@ -232,7 +229,7 @@ function test_file_path_valid_form
 
 # test for read access to file 
 # 
-function test_file_path_access
+function test_file_path_access()
 {
 	echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 
@@ -262,7 +259,8 @@ function test_file_path_access
 ################################################################
 
 # give user option to leave if here in error:
-function get_user_permission_to_proceed(){
+function get_user_permission_to_proceed()
+{
 
 	echo " Type q to quit program NOW, or press ENTER to continue."
 	echo && sleep 1
@@ -300,6 +298,35 @@ function check_no_of_program_args()
 
 ################################################################
 
+# entry test to prevent running this program on an inappropriate host
+function entry_test()
+{
+	go=42 # reset
+	#echo "go was set to: $go"
 
+	for authorised_host in ${authorised_host_list[@]}
+	do
+		#echo "$authorised_host"
+		[ $authorised_host == $actual_host ] && go=0 || go=1
+		[ "$go" -eq 0 ] && echo "THE CURRENT HOST IS AUTHORISED TO USE THIS PROGRAM" && break
+	done
+
+	# if loop finished with go=1
+	[ $go -eq 1 ] && echo "UNAUTHORISED HOST. ABOUT TO EXIT..." && sleep 2 && exit 1
+
+	#echo "go was set to: $go"
+}
+
+################################################################
+
+function display_current_config_file()
+{
+	echo && echo CURRENT CONFIGURATION FILE...
+	echo "==========================="
+
+	cat "$config_file_fullpath" && echo
+}
+
+################################################################
 
 
