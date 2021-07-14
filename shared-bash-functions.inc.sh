@@ -4,10 +4,10 @@
 
 # mkdir "$HOME/.local/share/lib10k"
 
-# symlink from $HOME/.local/share/lib10k/shared-bash-functions.sh to the git repository
+# symlink from $HOME/.local/share/lib10k/shared-bash-functions.inc.sh to the git repository
 
 # add code to source the library file at beginning of EVERY script, using:
-# ${SHARED_LIBRARIES_DIR}/shared-bash-functions.sh
+# ${SHARED_LIBRARIES_DIR}/shared-bash-functions.inc.sh
 
 # exit program with non-zero exit code
 function lib10k_exit_with_error()
