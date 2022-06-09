@@ -1,13 +1,26 @@
-#
-# set the environment variable in ~/.bashrc file on all hosts with :
-# export SHARED_LIBRARIES_DIR=$HOME/.local/share/lib10k
+#!/bin/bash
+# This library file is included by many main bash shell utility/application programs.
+# It must first be "installed", meaning symlinks must be created on the system, \
+#in locations (like /usr/local/lib) expected by those main bash programs. To do this installation, just
+# execute this file from its' local git project repository directory:
+# Use this command:
+# cd path/to/shared-functions-library/ && ./shared-bash-functions.inc.sh
+# That install only need be done once, although it is idempotent in any case.
 
-# mkdir "$HOME/.local/share/lib10k"
+# Get path to this script. 
+# It will be to either THIS library script OR a main script, depending on runtime.
+script_path="$(readlink -f $0)" 
+script_basename="$(basename $script_path)"
+script_dirname="$(dirname $script_path)"
 
-# symlink from $HOME/.local/share/lib10k/shared-bash-functions.inc.sh to the git repository
+if [[ $script_basename =~ 'shared-bash-functions.inc.sh' ]]
+then
+	source "${script_dirname}/symlink_lib_file.inc.sh"
+fi
 
-# add code to source the library file at beginning of EVERY script, using:
-# ${SHARED_LIBRARIES_DIR}/shared-bash-functions.inc.sh
+#===============
+# COMMON FUNCTIONS
+#===============
 
 # exit program with non-zero exit code
 function lib10k_exit_with_error()
@@ -23,7 +36,7 @@ function lib10k_exit_with_error()
 	exit $error_code
 }
 
-################################################################
+############################################
 # programs must all be in the PATH for both regular and root user.
 # they're not built-ins
 # could use their absolute paths, but these may vary with host system
@@ -50,7 +63,7 @@ function check_program_requirements()
 
 }
 
-################################################################
+############################################
 
 function display_program_header()
 {
@@ -71,7 +84,7 @@ function display_program_header()
 	fi
 }
 
-################################################################
+############################################
 # - trim leading and trailing space characters
 function sanitise_input_spaces_both_ends()
 {
@@ -86,7 +99,7 @@ function sanitise_input_spaces_both_ends()
 
 	echo "test line after space cleanups in "${FUNCNAME[0]}" is: $test_line" && echo
 }
-################################################################
+############################################
 # for example to prepare 
 function remove_trailing_fwd_slash()
 {
@@ -102,7 +115,7 @@ function remove_trailing_fwd_slash()
 
 	echo "test line after trim cleanups in "${FUNCNAME[0]}" is: $test_line" && echo
 }
-################################################################
+############################################
 # for example, to prepare file path to append another
 function remove_leading_fwd_slash()
 {
@@ -118,7 +131,7 @@ function remove_leading_fwd_slash()
 
 	echo "test line after trim cleanups in "${FUNCNAME[0]}" is: $test_line" && echo
 }
-################################################################
+############################################
 # 
 function make_abs_pathname()
 {
@@ -136,7 +149,7 @@ function make_abs_pathname()
 
 	echo "test line after trim cleanups in "${FUNCNAME[0]}" is: $test_line" && echo
 }
-################################################################
+############################################
 function make_rel_pathname()
 {
 	test_line="${1}"
@@ -155,7 +168,7 @@ function make_rel_pathname()
 
 	echo "test line after trim cleanups in "${FUNCNAME[0]}" is: $test_line" && echo
 }
-################################################################
+############################################
 
 # generic need to test for access to a directory. 3 logical states:
 # 0. directory exists and is cd-able
@@ -194,7 +207,7 @@ function test_dir_path_access()
 
 	return "$test_result"
 }
-################################################################
+############################################
 
 # firstly, we test that the parameter we got is of the correct form for an absolute file | sanitised directory path 
 # if this test fails, there's no point doing anything further
@@ -225,7 +238,7 @@ function test_file_path_valid_form()
 	return "$test_result"
 }
 
-################################################################
+############################################
 
 # test for read access to file 
 # 
@@ -256,7 +269,7 @@ function test_file_path_access()
 	return "$test_result"
 }
 
-################################################################
+############################################
 
 # give user option to leave if here in error:
 function get_user_permission_to_proceed()
@@ -277,7 +290,7 @@ function get_user_permission_to_proceed()
 	esac
 }
 
-################################################################
+############################################
 
 # quick check that number of program arguments is within the valid range
 function check_no_of_program_args()
@@ -296,7 +309,7 @@ function check_no_of_program_args()
 
 }
 
-################################################################
+############################################
 
 # entry test to prevent running this program on an inappropriate host
 function entry_test()
@@ -317,7 +330,7 @@ function entry_test()
 	#echo "go was set to: $go"
 }
 
-################################################################
+############################################
 
 function display_current_config_file()
 {
@@ -327,6 +340,6 @@ function display_current_config_file()
 	cat "$config_file_fullpath" && echo
 }
 
-################################################################
+############################################
 
 

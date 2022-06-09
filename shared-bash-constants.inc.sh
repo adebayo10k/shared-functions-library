@@ -1,8 +1,31 @@
-#
-# library of contants and literals that are reused in the same contexts by multilple scripts in the 10k domain
+#!/bin/bash
+# This library file is included by many main bash shell utility/application programs.
+# It must first be "installed", meaning symlinks must be created on the system, \
+#in locations (like /usr/local/lib) expected by those main bash programs. To do this installation, just
+# execute this file from its' local git project repository directory:
+# Use this command:
+# cd path/to/shared-functions-library/ && ./shared-bash-constants.inc.sh
+# That install only need be done once, although it is idempotent in any case.
 
-# exit codes are required by main scripts for the shell session
 
+# Get path to this script. 
+# It will be to either THIS library script OR a main script, depending on runtime.
+script_path="$(readlink -f $0)" 
+script_basename="$(basename $script_path)"
+script_dirname="$(dirname $script_path)"
+
+if [[ $script_basename =~ 'shared-bash-constants.inc.sh' ]]
+then
+	source "${script_dirname}/symlink_lib_file.inc.sh"
+fi
+
+#===============
+# COMMON LITERALS
+#===============
+
+# Library of constants and literals that are reused in the same contexts by multilple scripts in the 10k domain
+
+# exit codes required by main script and any sporned child shells
 ## EXIT CODES:
 export E_UNEXPECTED_BRANCH_ENTERED=10
 export E_OUT_OF_BOUNDS_BRANCH_ENTERED=11
