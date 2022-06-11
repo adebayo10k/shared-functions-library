@@ -43,48 +43,113 @@ function lib10k_exit_with_error()
 function lib10k_check_program_requirements() 
 {
 	declare -a dependencies=( "$@" )
-
 	echo
-	echo "PROGRAM REQUIREMENTS CHECK"
-	echo "=========================="
-
 	for program_name in "${dependencies[@]}"
 	do
+	# TODO: why can't root super user run the type command?
 	  if type "$program_name" >/dev/null 2>&1
 		then
-			echo "$program_name already installed OK"
+			echo "\"${program_name}\" already installed OK"
 		else
-			echo "${program_name} is NOT installed."
+			echo "\"${program_name}\" is NOT installed."
 			echo "program dependencies are: ${program_dependencies[@]}"
   			msg="Required program not found. Exiting now..."
 			lib10k_exit_with_error "$E_REQUIRED_PROGRAM_NOT_FOUND" "$msg"
 		fi
 	done
-
+	echo
 }
 
 ############################################
 
 function lib10k_display_program_header()
 {
-	#program_title="${1}"
-	#original_author="${2}"
+	local program_title="${1}"
+	local original_author="${2}"
 
 	# Display a program header and give user option to leave if here in error:
     echo
-    echo -e "			\033[33m==============================================================\033[0m";
-    echo -e "			\033[33m||			Welcome to the $program_title			\033[0m";
-	echo -e "			\033[33m||			Author: $original_author					\033[0m"; 
-	echo -e "			\033[33m==============================================================\033[0m";
+    echo -e "\033[33mWelcome to the \"$program_title\" program\033[0m"
+	echo -e "\033[33mAuthor: $original_author\033[0m" 
     echo
 
-	if type cowsay > /dev/null 2>&1
+	if [ ! $USER = 'root' ]
 	then
-		cowsay "Hello, ${USER}!"
+		echo "Hello, ${USER}!" && echo
 	fi
 }
 
 ############################################
+
+# give user option to leave if here in error:
+function lib10k_get_user_permission_to_proceed()
+{
+	echo " Type q to quit program NOW, or press ENTER to continue."
+	echo && sleep 1
+
+	# TODO: if the shell level is -ge 2, called from another script so bypass this exit option
+	read last_chance
+	case $last_chance in 
+	[qQ])	echo
+				echo "Goodbye! Exiting now..."
+				exit 0 #
+				;;
+	*) 		echo "You're IN...Get busy!" && echo
+				;;
+	esac
+}
+
+############################################
+
+# quick check that number of program arguments is within the valid range
+function lib10k_check_no_of_program_args()
+{
+	#echo && echo "Entered into function ${FUNCNAME[0]}" && echo
+	
+	# establish that number of parameters is valid
+	if [ $actual_no_of_program_parameters -lt $min_expected_no_of_program_parameters -o \
+	$actual_no_of_program_parameters -gt $max_expected_no_of_program_parameters  ]
+	then
+		msg="Incorrect number of command line arguments. Exiting now..."
+		lib10k_exit_with_error "$E_INCORRECT_NUMBER_OF_ARGS" "$msg"
+	fi
+	
+	#echo && echo "Leaving from function ${FUNCNAME[0]}" && echo
+}
+
+############################################
+
+# entry test to prevent running this program on an inappropriate host
+function lib10k_entry_test()
+{
+	go=42 # reset
+	#echo "go was set to: $go"
+
+	for authorised_host in ${authorised_host_list[@]}
+	do
+		#echo "$authorised_host"
+		[ $authorised_host == $actual_host ] && go=0 || go=1
+		[ "$go" -eq 0 ] && echo "THE CURRENT HOST IS AUTHORISED TO USE THIS PROGRAM" && break
+	done
+
+	# if loop finished with go=1
+	[ $go -eq 1 ] && echo "UNAUTHORISED HOST. ABOUT TO EXIT..." && sleep 2 && exit 1
+
+	#echo "go was set to: $go"
+}
+
+############################################
+
+function lib10k_display_current_config_file()
+{
+	echo && echo CURRENT CONFIGURATION FILE...
+	echo "==========================="
+
+	cat "$config_file_fullpath" && echo
+}
+
+############################################
+
 # - trim leading and trailing space characters
 function lib10k_sanitise_input_spaces_both_ends()
 {
@@ -267,77 +332,6 @@ function lib10k_test_file_path_access()
 	echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
 
 	return "$test_result"
-}
-
-############################################
-
-# give user option to leave if here in error:
-function lib10k_get_user_permission_to_proceed()
-{
-
-	echo " Type q to quit program NOW, or press ENTER to continue."
-	echo && sleep 1
-
-	# TODO: if the shell level is -ge 2, called from another script so bypass this exit option
-	read last_chance
-	case $last_chance in 
-	[qQ])	echo
-				echo "Goodbye! Exiting now..."
-				exit 0 #
-				;;
-	*) 		echo "You're IN...Get busy!" && echo
-				;;
-	esac
-}
-
-############################################
-
-# quick check that number of program arguments is within the valid range
-function lib10k_check_no_of_program_args()
-{
-	#echo && echo "Entered into function ${FUNCNAME[0]}" && echo
-	
-	# establish that number of parameters is valid
-	if [ $actual_no_of_program_parameters -lt $min_expected_no_of_program_parameters -o \
-	$actual_no_of_program_parameters -gt $max_expected_no_of_program_parameters  ]
-	then
-		msg="Incorrect number of command line arguments. Exiting now..."
-		lib10k_exit_with_error "$E_INCORRECT_NUMBER_OF_ARGS" "$msg"
-	fi
-	
-	#echo && echo "Leaving from function ${FUNCNAME[0]}" && echo
-
-}
-
-############################################
-
-# entry test to prevent running this program on an inappropriate host
-function lib10k_entry_test()
-{
-	go=42 # reset
-	#echo "go was set to: $go"
-
-	for authorised_host in ${authorised_host_list[@]}
-	do
-		#echo "$authorised_host"
-		[ $authorised_host == $actual_host ] && go=0 || go=1
-		[ "$go" -eq 0 ] && echo "THE CURRENT HOST IS AUTHORISED TO USE THIS PROGRAM" && break
-	done
-
-	# if loop finished with go=1
-	[ $go -eq 1 ] && echo "UNAUTHORISED HOST. ABOUT TO EXIT..." && sleep 2 && exit 1
-
-	#echo "go was set to: $go"
-}
-
-############################################
-
-function lib10k_display_current_config_file()
-{
-	echo && echo CURRENT CONFIGURATION FILE...
-	echo "==========================="
-
-	cat "$config_file_fullpath" && echo
 }
 
 ############################################
