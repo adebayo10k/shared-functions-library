@@ -1,6 +1,6 @@
 #!/bin/bash
 # This library file is included by many main bash shell utility/application programs.
-# It must first be "installed", meaning symlinks must be created on the system, \
+# It can optionally be first "installed", meaning symlinks are created on the system, \
 #in locations (like /usr/local/lib) expected by those main bash programs. To do this installation, just
 # execute this file from its' local git project repository directory:
 # Use this command:
@@ -9,13 +9,14 @@
 
 # Get path to this script. 
 # It will be to either THIS library script OR a main script, depending on runtime.
-script_path="$(readlink -f $0)" 
-script_basename="$(basename $script_path)"
-script_dirname="$(dirname $script_path)"
+lib_script_path="$(readlink -f $0)" 
+lib_script_basename="$(basename $lib_script_path)"
+lib_script_dirname="$(dirname $lib_script_path)"
 
-if [[ $script_basename =~ 'shared-bash-functions.inc.sh' ]]
+if [[ $lib_script_basename =~ 'shared-bash-functions.inc.sh' ]] 
 then
-	source "${script_dirname}/symlink_lib_file.inc.sh"
+	# we must be running this script directly, to create symlinks
+	source "${lib_script_dirname}/symlink_lib_file.inc.sh"
 fi
 
 #===============
@@ -37,10 +38,9 @@ function lib10k_exit_with_error()
 }
 
 ############################################
-# programs must all be in the PATH for both regular and root user.
-# they're not built-ins
-# could use their absolute paths, but these may vary with host system
-function check_program_requirements() 
+# programs that are not built-ins  must be in the regular user PATH \
+# or use their absolute paths, but these may vary with host system
+function lib10k_check_program_requirements() 
 {
 	declare -a dependencies=( "$@" )
 
@@ -65,7 +65,7 @@ function check_program_requirements()
 
 ############################################
 
-function display_program_header()
+function lib10k_display_program_header()
 {
 	#program_title="${1}"
 	#original_author="${2}"
@@ -86,7 +86,7 @@ function display_program_header()
 
 ############################################
 # - trim leading and trailing space characters
-function sanitise_input_spaces_both_ends()
+function lib10k_sanitise_input_spaces_both_ends()
 {
 	test_line="${1}"
 	echo "test line on entering "${FUNCNAME[0]}" is: $test_line" && echo
@@ -101,7 +101,7 @@ function sanitise_input_spaces_both_ends()
 }
 ############################################
 # for example to prepare 
-function remove_trailing_fwd_slash()
+function lib10k_remove_trailing_fwd_slash()
 {
 	test_line="${1}"
 	echo "test line on entering "${FUNCNAME[0]}" is: $test_line" && echo
@@ -117,7 +117,7 @@ function remove_trailing_fwd_slash()
 }
 ############################################
 # for example, to prepare file path to append another
-function remove_leading_fwd_slash()
+function lib10k_remove_leading_fwd_slash()
 {
 	test_line="${1}"
 	echo "test line on entering "${FUNCNAME[0]}" is: $test_line" && echo
@@ -133,7 +133,7 @@ function remove_leading_fwd_slash()
 }
 ############################################
 # 
-function make_abs_pathname()
+function lib10k_make_abs_pathname()
 {
 	test_line="${1}"
 	echo "test line on entering "${FUNCNAME[0]}" is: $test_line" && echo
@@ -143,14 +143,14 @@ function make_abs_pathname()
 	 [[ "$test_line" == [[:blank:]]* ]]
 	do
 		# call the appropriate set of functions
-		sanitise_input_spaces_both_ends "$test_line"
-		remove_trailing_fwd_slash "$test_line"
+		lib10k_sanitise_input_spaces_both_ends "$test_line"
+		lib10k_remove_trailing_fwd_slash "$test_line"
 	done
 
 	echo "test line after trim cleanups in "${FUNCNAME[0]}" is: $test_line" && echo
 }
 ############################################
-function make_rel_pathname()
+function lib10k_make_rel_pathname()
 {
 	test_line="${1}"
 	echo "test line on entering "${FUNCNAME[0]}" is: $test_line" && echo
@@ -161,9 +161,9 @@ function make_rel_pathname()
 	 [[ "$test_line" == '/'* ]]
 	do
 		# call the appropriate set of functions
-		sanitise_input_spaces_both_ends "$test_line"
-		remove_trailing_fwd_slash "$test_line"
-		remove_leading_fwd_slash "$test_line"
+		lib10k_sanitise_input_spaces_both_ends "$test_line"
+		lib10k_remove_trailing_fwd_slash "$test_line"
+		lib10k_remove_leading_fwd_slash "$test_line"
 	done
 
 	echo "test line after trim cleanups in "${FUNCNAME[0]}" is: $test_line" && echo
@@ -175,7 +175,7 @@ function make_rel_pathname()
 # 1. directory exists and is not cd-able
 # 2. neither of those, so directory does NOT exist
 # 
-function test_dir_path_access()
+function lib10k_test_dir_path_access()
 {
 	echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 
@@ -212,7 +212,7 @@ function test_dir_path_access()
 # firstly, we test that the parameter we got is of the correct form for an absolute file | sanitised directory path 
 # if this test fails, there's no point doing anything further
 # 
-function test_file_path_valid_form()
+function lib10k_test_file_path_valid_form()
 {
 	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 
@@ -242,7 +242,7 @@ function test_file_path_valid_form()
 
 # test for read access to file 
 # 
-function test_file_path_access()
+function lib10k_test_file_path_access()
 {
 	echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 
@@ -272,7 +272,7 @@ function test_file_path_access()
 ############################################
 
 # give user option to leave if here in error:
-function get_user_permission_to_proceed()
+function lib10k_get_user_permission_to_proceed()
 {
 
 	echo " Type q to quit program NOW, or press ENTER to continue."
@@ -293,7 +293,7 @@ function get_user_permission_to_proceed()
 ############################################
 
 # quick check that number of program arguments is within the valid range
-function check_no_of_program_args()
+function lib10k_check_no_of_program_args()
 {
 	#echo && echo "Entered into function ${FUNCNAME[0]}" && echo
 	
@@ -312,7 +312,7 @@ function check_no_of_program_args()
 ############################################
 
 # entry test to prevent running this program on an inappropriate host
-function entry_test()
+function lib10k_entry_test()
 {
 	go=42 # reset
 	#echo "go was set to: $go"
@@ -332,7 +332,7 @@ function entry_test()
 
 ############################################
 
-function display_current_config_file()
+function lib10k_display_current_config_file()
 {
 	echo && echo CURRENT CONFIGURATION FILE...
 	echo "==========================="

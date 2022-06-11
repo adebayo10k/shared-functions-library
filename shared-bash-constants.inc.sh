@@ -1,6 +1,6 @@
 #!/bin/bash
 # This library file is included by many main bash shell utility/application programs.
-# It must first be "installed", meaning symlinks must be created on the system, \
+# It can optionally be first "installed", meaning symlinks are created on the system, \
 #in locations (like /usr/local/lib) expected by those main bash programs. To do this installation, just
 # execute this file from its' local git project repository directory:
 # Use this command:
@@ -10,13 +10,14 @@
 
 # Get path to this script. 
 # It will be to either THIS library script OR a main script, depending on runtime.
-script_path="$(readlink -f $0)" 
-script_basename="$(basename $script_path)"
-script_dirname="$(dirname $script_path)"
+lib_script_path="$(readlink -f $0)" 
+lib_script_basename="$(basename $lib_script_path)"
+lib_script_dirname="$(dirname $lib_script_path)"
 
-if [[ $script_basename =~ 'shared-bash-constants.inc.sh' ]]
+if [[ $lib_script_basename =~ 'shared-bash-constants.inc.sh' ]] 
 then
-	source "${script_dirname}/symlink_lib_file.inc.sh"
+	# we must be running this script directly, to create symlinks
+	source "${lib_script_dirname}/symlink_lib_file.inc.sh"
 fi
 
 #===============
