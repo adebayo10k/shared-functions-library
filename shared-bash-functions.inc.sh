@@ -84,7 +84,7 @@ function lib10k_display_program_header()
 # give user option to leave if here in error:
 function lib10k_get_user_permission_to_proceed()
 {
-	echo " Type q to quit program NOW, or press ENTER to continue."
+	echo "Type q to quit program NOW, or press ENTER to continue."
 	echo && sleep 1
 
 	# TODO: if the shell level is -ge 2, called from another script so bypass this exit option
@@ -246,17 +246,17 @@ function lib10k_make_rel_pathname()
 # 
 function lib10k_test_dir_path_access()
 {
-	echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
+	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 
-	test_result=
-	test_dir_fullpath=$1
+	local test_result=
+	local test_dir_fullpath=$1
 
-	echo "test_dir_fullpath is set to: $test_dir_fullpath"
+	#echo "test_dir_fullpath is set to: $test_dir_fullpath"
 
 	if [ -d "$test_dir_fullpath" ] && cd "$test_dir_fullpath" 2>/dev/null
 	then
 		# directory file found and accessible
-		echo "directory "$test_dir_fullpath" found and accessed ok" && echo
+		# echo "directory "$test_dir_fullpath" found and accessed ok" && echo
 		test_result=0
 	elif [ -d "$test_dir_fullpath" ] ## 
 	then
@@ -272,7 +272,7 @@ function lib10k_test_dir_path_access()
 		return $E_REQUIRED_FILE_NOT_FOUND
 	fi
 
-	echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
+	# echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
 
 	return "$test_result"
 }
@@ -285,8 +285,8 @@ function lib10k_test_file_path_valid_form()
 {
 	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 
-	test_result=
-	test_file_fullpath=$1
+	local test_result=
+	local test_file_fullpath=$1
 	
 	#echo "test_file_fullpath is set to: $test_file_fullpath"
 	#echo "test_dir_fullpath is set to: $test_dir_fullpath"
