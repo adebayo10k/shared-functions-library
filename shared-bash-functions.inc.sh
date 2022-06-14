@@ -119,21 +119,25 @@ function lib10k_check_no_of_program_args()
 
 ############################################
 
-# entry test to prevent running this program on an inappropriate host
+# test whether this host is authorised to run this program
 function lib10k_entry_test()
 {
-	go=42 # reset
+	go=42 # initialise to non-zero fail state
 	#echo "go was set to: $go"
 
 	for authorised_host in ${authorised_host_list[@]}
 	do
 		#echo "$authorised_host"
 		[ $authorised_host == $actual_host ] && go=0 || go=1
-		[ "$go" -eq 0 ] && echo "THE CURRENT HOST IS AUTHORISED TO USE THIS PROGRAM" && break
+		[ "$go" -eq 0 ] && \
+		echo "THE CURRENT HOST IS AUTHORISED TO USE THIS PROGRAM" && break
 	done
 
 	# if loop finished with go=1
-	[ $go -eq 1 ] && echo "UNAUTHORISED HOST. ABOUT TO EXIT..." && sleep 2 && exit 1
+	[ $go -eq 1 ] && \
+	msg="UNAUTHORISED HOST. ABOUT TO EXIT..." && \
+	sleep 2 && \
+	lib10k_exit_with_error "$E_INCORRECT_HOST" "$msg"
 
 	#echo "go was set to: $go"
 }
