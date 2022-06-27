@@ -122,24 +122,28 @@ function lib10k_check_no_of_program_args()
 # test whether this host is authorised to run this program
 function lib10k_entry_test()
 {
-	go=42 # initialise to non-zero fail state
-	#echo "go was set to: $go"
+	local allow=42 # initialise to non-zero fail state
+	# if authorised_host_list is empty, skip this test (allow host entry by default), \
+	# otherwise do this test
+	if [ ${#authorised_host_list} -ne 0 ]
+	then
+		for authorised_host in ${authorised_host_list[@]}
+		do
+			# set allow to 0 or 1 (1 being fail/deny)
+			[ $authorised_host == $actual_host ] && allow=0 || allow=1
+			[ "$allow" -eq 0 ] && \
+			echo "TESTED. The current host is authorised to used this program OK." && break
+		done
+	else
+		# Test skipped, as zero specifically authorised host, meaning 'allow all hosts'
+		# Test for 42 here?
+		echo "TEST SKIPPED. The current host is authorised to used this program OK."
+	fi
 
-	for authorised_host in ${authorised_host_list[@]}
-	do
-		#echo "$authorised_host"
-		[ $authorised_host == $actual_host ] && go=0 || go=1
-		[ "$go" -eq 0 ] && \
-		echo "THE CURRENT HOST IS AUTHORISED TO USE THIS PROGRAM" && break
-	done
-
-	# if loop finished with go=1
-	[ $go -eq 1 ] && \
-	msg="UNAUTHORISED HOST. ABOUT TO EXIT..." && \
-	sleep 2 && \
+	# if loop finished with allow=1, deny the current host
+	[ $allow -eq 1 ] && \
+	msg="TESTED. Unathorised Host. Exiting now..." && \
 	lib10k_exit_with_error "$E_INCORRECT_HOST" "$msg"
-
-	#echo "go was set to: $go"
 }
 
 ############################################
