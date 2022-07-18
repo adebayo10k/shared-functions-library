@@ -48,11 +48,20 @@ ABS_FILEPATH_WITH_TS_REGEX='^(/{1}[A-Za-z0-9._~:@-]+)+(/){1}$'
 ABS_FILEPATH_NO_TS_REGEX='^(/{1}[A-Za-z0-9._~:@-]+)+$' 
 # abs filepath with or without trailing / 
 ABS_FILEPATH_FLEX_TS_REGEX='^(/{1}[A-Za-z0-9._~:@-]+)+(/)?$'
+
 #email regex
 EMAIL_REGEX='^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$'
 # ^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$
 # ^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:].]{2,4}$ ]]
 # file extension regex
 FILE_EXTENSION_REGEX='^\.{1}[A-Za-z0-9]+$'
+
+# basic URL for only obligitary http, https schema.
+# No anchors to allow concatenation with other regexes.
+BASIC_URL_REGEX='http(s)?:\/\/(www\.)?[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[a-zA-Z0-9-]{2,}(\/)?'
+
+# relative filepath, with or without extension
+# No anchors to allow concatenation with other regexes.
+REL_FILEPATH_REGEX='([A-Za-z0-9\._~:@-]+/)+[A-Za-z0-9\._~:@-]+'
 
 
