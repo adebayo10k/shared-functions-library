@@ -43,7 +43,6 @@ function lib10k_exit_with_error()
 function lib10k_check_program_requirements() 
 {
 	declare -a dependencies=( "$@" )
-	echo
 	for program_name in "${dependencies[@]}"
 	do
 	# TODO: why can't root super user run the type command?
@@ -81,20 +80,25 @@ function lib10k_display_program_header()
 
 ############################################
 
-# give user option to leave if here in error:
+# give user option to leave if, for example...
+# here in error,
+# or cannot proceed due to some error or failure.
 function lib10k_get_user_permission_to_proceed()
 {
-	echo "Type q to quit program NOW, or press ENTER to continue."
+	local msg="$1"
+
+	echo -e "$msg"
+	echo "Enter q to quit program NOW, or just press ENTER to continue."
 	echo && sleep 1
 
-	# TODO: if the shell level is -ge 2, called from another script so bypass this exit option
 	read last_chance
 	case $last_chance in 
-	[qQ])	echo
-				echo "Goodbye! Exiting now..."
-				exit 0 #
+		[qQ])	#echo && echo "Goodbye! Exiting now..."
+				#	exit 0 #
+				return 1 # negative
 				;;
-	*) 		echo "You're IN...Get busy!" && echo
+		*)		#echo && echo "Ok, continuing..." && echo
+				return 0 # affirmative
 				;;
 	esac
 }
