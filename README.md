@@ -1,9 +1,10 @@
 # shared-functions-library
-The set of functions that are common to most of the development bash shell scripts found in [adebayo10k](https://github.com/adebayo10k) repositories.
+This project repository is generally added to other project repositories as a submodule.
+It contains the set of functions that used in common by most of the development bash shell scripts found in [adebayo10k](https://github.com/adebayo10k) repositories.
 
 ## Files
 - shared-bash-functions.inc.sh - contains commonly used functions.
-- shared-bash-constants.inc.sh - contains collected literal like regular expressions.
+- shared-bash-constants.inc.sh - contains collected literals like regular expressions.
 - symlink_lib_file.inc.sh - creates symbolic links back to the above two files in their local git repo locations.
 
 ## Purpose
