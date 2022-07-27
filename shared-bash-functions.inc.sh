@@ -102,9 +102,34 @@ function lib10k_get_user_permission_to_proceed()
 				;;
 	esac
 }
-
 ############################################
+# generalist function to handle user responses and return expected int
+function lib10k_get_user_response()
+{
+	for msg in "$@"
+	do
+		echo -e "$msg"
+		#echo -e "$msg" && prompt="$msg"
+	done
 
+	read user_response
+	#read -p "$prompt" && user_response="${REPLY}"
+
+	# where user just presses ENTER
+	[ -z "$user_response" ] && return 0
+
+	case $user_response in
+		[nN]) return 3 #
+				;;
+		[yY]) return 2 #
+				;;
+		[qQ]) return 1 #
+				;;
+		*)		return 999 #
+				;;
+	esac
+}
+############################################
 # quick check that number of program arguments is within the valid range
 function lib10k_check_no_of_program_args()
 {
