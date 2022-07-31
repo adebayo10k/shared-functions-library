@@ -32,9 +32,7 @@ function lib10k_exit_with_error()
 	echo "error code: $error_code"
 	echo "$error_message"
 	#echo "USAGE: $(basename $0) ABSOLUTE_FILEPATH..."
-	echo && sleep 1
-
-	exit $error_code
+	echo && exit $error_code
 }
 
 ############################################
@@ -58,7 +56,26 @@ function lib10k_check_program_requirements()
 	done
 	echo
 }
-
+############################################
+# programs that are not built-ins  must be in the regular user PATH \
+# or use their absolute paths, but these may vary with host system
+# check program dependencies, report only if missing.
+function lib10k_check_program_dependencies() 
+{
+	declare -a dependencies=( "$@" )
+	for program_name in "${dependencies[@]}"
+	do
+		# TODO: why can't root super user run the type command?
+	  	if ! (type "$program_name" >/dev/null 2>&1)
+		then
+			echo "\"${program_name}\" is NOT installed."
+			echo "program dependencies are: ${program_dependencies[@]}"
+  			msg="Required program not found. Exiting now..."
+			lib10k_exit_with_error "$E_REQUIRED_PROGRAM_NOT_FOUND" "$msg"
+		fi
+	done
+	echo
+}
 ############################################
 
 function lib10k_display_program_header()
@@ -88,8 +105,7 @@ function lib10k_get_user_permission_to_proceed()
 	local msg="$1"
 
 	echo -e "$msg"
-	echo "Enter q to quit program NOW, or just press ENTER to continue."
-	echo && sleep 1
+	echo "Enter q to quit program NOW, or just press ENTER to continue." && echo
 
 	read last_chance
 	case $last_chance in 
@@ -130,6 +146,36 @@ function lib10k_get_user_response()
 	esac
 }
 ############################################
+# generalist function to handle user responses and return expected int
+function lib10k_get_user_response1()
+{
+	for msg in "$@"
+	do
+		echo -e "$msg"
+		#echo -e "$msg" && prompt="$msg"
+	done
+
+	read user_response
+	#read -p "$prompt" && user_response="${REPLY}"
+
+	# where user just presses ENTER
+	[ -z "$user_response" ] && return 0
+
+	case $user_response in
+		[nN]) return 3 #
+				;;
+		[yY]) return 2 #
+				;;
+		[qQ]) return 1 #
+				;;
+		*)		return 999 #
+				;;
+	esac
+}
+############################################
+
+
+
 # quick check that number of program arguments is within the valid range
 function lib10k_check_no_of_program_args()
 {
@@ -329,7 +375,7 @@ function lib10k_test_file_path_valid_form()
 		#echo "THE FORM OF THE INCOMING PARAMETER IS OF A VALID ABSOLUTE FILE PATH"
 		test_result=0
 	else
-		echo "AN INCOMING PARAMETER WAS SET, BUT WAS NOT A MATCH FOR OUR KNOWN PATH FORM REGEX "$ABS_FILEPATH_FLEX_TS_REGEX"" && sleep 1 && echo
+		echo "AN INCOMING PARAMETER WAS SET, BUT WAS NOT A MATCH FOR OUR KNOWN PATH FORM REGEX "$ABS_FILEPATH_FLEX_TS_REGEX"" && echo
 		echo "Returning with a non-zero test result..."
 		test_result=1
 		return $E_UNEXPECTED_ARG_VALUE
