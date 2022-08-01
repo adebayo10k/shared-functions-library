@@ -60,8 +60,24 @@ FILE_EXTENSION_REGEX='^\.{1}[A-Za-z0-9]+$'
 # No anchors to allow concatenation with other regexes.
 BASIC_URL_REGEX='http(s)?:\/\/(www\.)?[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[a-zA-Z0-9-]{2,}(\/)?'
 
-# relative filepath, with or without extension
-# No anchors to allow concatenation with other regexes.
-REL_FILEPATH_REGEX='([A-Za-z0-9\._~:@-]+/)+[A-Za-z0-9\._~:@-]+'
+# relative base filepath, with or without extension
+# No leading anchor to allow concatenation with other regexes.
+REL_FILEPATH_REGEX='([A-Za-z0-9\._~:@-]+/)+[A-Za-z0-9\._~:@-]+$'
+
+# file basename, with or without extension
+# No leading anchor to allow concatenation with other regexes.
+FILE_BASENAME_REGEX='[A-Za-z0-9_\-]+(\.[A-Za-z0-9\._\-])?$'
+# file basename, with or without extension
+# with Leading anchor
+FILE_BASENAME_LA_REGEX='^([A-Za-z0-9_\-])+\.?([A-Za-z0-9\._\-])+$'
+
+# file basename, with or without extension
+# with Leading anchor
+# with possible ONE shell expansion only
+FILE_BASENAME_LA_WITH_SE_REGEX='^(\.{1,2}/)*[A-Za-z0-9\._-]+$'
+
+# abs filepath without trailing /, with possible ONE shell expansion only
+#ABS_FILEPATH_NO_TS_WITH_SE_REGEX='^\.{1,2}(/{1}[A-Za-z0-9._~\-]+)+$' 
+
 
 

@@ -319,7 +319,7 @@ function lib10k_make_rel_pathname()
 ############################################
 
 # generic need to test for access to a directory. 3 logical states:
-# 0. directory exists and is cd-able
+# 0. directory exists and is cd-able (actully do the cd)
 # 1. directory exists and is not cd-able
 # 2. neither of those, so directory does NOT exist
 # 
@@ -328,7 +328,7 @@ function lib10k_test_dir_path_access()
 	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 
 	local test_result=
-	local test_dir_fullpath=$1
+	local test_dir_fullpath="$1"
 
 	#echo "test_dir_fullpath is set to: $test_dir_fullpath"
 
@@ -357,7 +357,46 @@ function lib10k_test_dir_path_access()
 }
 ############################################
 
-# firstly, we test that the parameter we got is of the correct form for an absolute file | sanitised directory path 
+# AS ABOVE, BUT DON'T ACTUALLY cd TO THE DIR BEING TESTED.
+
+# generic need to test for access to a directory. 3 logical states:
+# 0. directory exists and is cd-able (cd in a child shell)
+# 1. directory exists and is not cd-able
+# 2. neither of those, so directory does NOT exist
+# 
+function lib10k_test_dir_path_access1()
+{
+	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
+
+	local test_result=
+	local test_dir_fullpath="$1"
+
+	#echo "test_dir_fullpath is set to: $test_dir_fullpath"
+
+	if [ -d "$test_dir_fullpath" ] && (cd "$test_dir_fullpath" 2>/dev/null)
+	then
+		# directory file found and accessible
+		# echo "directory "$test_dir_fullpath" found and accessed ok" && echo
+		test_result=0
+	elif [ -d "$test_dir_fullpath" ] ## 
+	then
+		# directory file found BUT NOT accessible CAN'T RECOVER FROM THIS
+		echo "directory "$test_dir_fullpath" found, BUT NOT accessed ok" && echo
+		test_result=1
+		echo "Returning from function \"${FUNCNAME[0]}\" with test result code: $E_FILE_NOT_ACCESSIBLE"
+		return $E_FILE_NOT_ACCESSIBLE
+	else
+		# -> directory not found: THIS CAN BE RESOLVED BY CREATING THE DIRECTORY
+		test_result=1
+		echo "Returning from function \"${FUNCNAME[0]}\" with test result code: $E_REQUIRED_FILE_NOT_FOUND"
+		return $E_REQUIRED_FILE_NOT_FOUND
+	fi
+
+	# echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
+
+	return "$test_result"
+}
+# test that the parameter we got is of the correct form for an absolute file | sanitised directory path 
 # if this test fails, there's no point doing anything further
 # 
 function lib10k_test_file_path_valid_form()
@@ -370,12 +409,13 @@ function lib10k_test_file_path_valid_form()
 	#echo "test_file_fullpath is set to: $test_file_fullpath"
 	#echo "test_dir_fullpath is set to: $test_dir_fullpath"
 
-	if [[ $test_file_fullpath =~ $ABS_FILEPATH_FLEX_TS_REGEX ]]
+	if [[ $test_file_fullpath =~ $ABS_FILEPATH_FLEX_TS_REGEX ]] || [[ $test_file_fullpath =~ $FILE_BASENAME_LA_WITH_SE_REGEX ]] 
 	then
 		#echo "THE FORM OF THE INCOMING PARAMETER IS OF A VALID ABSOLUTE FILE PATH"
 		test_result=0
 	else
-		echo "AN INCOMING PARAMETER WAS SET, BUT WAS NOT A MATCH FOR OUR KNOWN PATH FORM REGEX "$ABS_FILEPATH_FLEX_TS_REGEX"" && echo
+		echo "AN INCOMING PARAMETER WAS SET, BUT WAS NOT A MATCH FOR:" \
+        echo "OUR KNOWN PATH FORM REGEX "$ABS_FILEPATH_FLEX_TS_REGEX"" && echo
 		echo "Returning with a non-zero test result..."
 		test_result=1
 		return $E_UNEXPECTED_ARG_VALUE
