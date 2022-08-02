@@ -31,7 +31,6 @@ function lib10k_exit_with_error()
 
 	echo "error code: $error_code"
 	echo "$error_message"
-	#echo "USAGE: $(basename $0) ABSOLUTE_FILEPATH..."
 	echo && exit $error_code
 }
 
@@ -173,9 +172,6 @@ function lib10k_get_user_response1()
 	esac
 }
 ############################################
-
-
-
 # quick check that number of program arguments is within the valid range
 function lib10k_check_no_of_program_args()
 {
@@ -347,7 +343,7 @@ function lib10k_test_dir_path_access()
 	else
 		# -> directory not found: THIS CAN BE RESOLVED BY CREATING THE DIRECTORY
 		test_result=1
-		echo "Returning from function \"${FUNCNAME[0]}\" with test result code: $E_REQUIRED_FILE_NOT_FOUND"
+		#echo "Returning from function \"${FUNCNAME[0]}\" with test result code: $E_REQUIRED_FILE_NOT_FOUND"
 		return $E_REQUIRED_FILE_NOT_FOUND
 	fi
 
@@ -383,12 +379,12 @@ function lib10k_test_dir_path_access1()
 		# directory file found BUT NOT accessible CAN'T RECOVER FROM THIS
 		echo "directory "$test_dir_fullpath" found, BUT NOT accessed ok" && echo
 		test_result=1
-		echo "Returning from function \"${FUNCNAME[0]}\" with test result code: $E_FILE_NOT_ACCESSIBLE"
+		#echo "Returning from function \"${FUNCNAME[0]}\" with test result code: $E_FILE_NOT_ACCESSIBLE"
 		return $E_FILE_NOT_ACCESSIBLE
 	else
 		# -> directory not found: THIS CAN BE RESOLVED BY CREATING THE DIRECTORY
 		test_result=1
-		echo "Returning from function \"${FUNCNAME[0]}\" with test result code: $E_REQUIRED_FILE_NOT_FOUND"
+		#echo "Returning from function \"${FUNCNAME[0]}\" with test result code: $E_REQUIRED_FILE_NOT_FOUND"
 		return $E_REQUIRED_FILE_NOT_FOUND
 	fi
 
@@ -430,20 +426,16 @@ function lib10k_test_file_path_valid_form()
 
 # test for read access to file 
 # 
-function lib10k_test_file_path_access()
-{
-	echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
-
+function lib10k_test_file_path_access() {
+	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 	test_result=
 	test_file_fullpath=$1
-
-	echo "test_file_fullpath is set to: $test_file_fullpath"
-
+	#echo "test_file_fullpath is set to: $test_file_fullpath"
 	# test for expected file type (regular) and read permission
 	if [ -f "$test_file_fullpath" ] && [ -r "$test_file_fullpath" ]
 	then
 		# test file found and accessible
-		echo "Test file found to be readable" && echo
+		#echo "Test file found to be readable" && echo
 		test_result=0
 	else
 		# -> return due to failure of any of the above tests:
@@ -452,7 +444,7 @@ function lib10k_test_file_path_access()
 		return $E_REQUIRED_FILE_NOT_FOUND
 	fi
 
-	echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
+	#echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
 
 	return "$test_result"
 }
