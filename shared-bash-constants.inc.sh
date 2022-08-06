@@ -26,6 +26,12 @@ fi
 
 # Library of constants and literals that are reused in the same contexts by multilple scripts in the 10k domain
 
+RED='\033[31m'
+BLUE='\033[1;34m'
+BROWN='\033[33m'
+GREEN='\033[32m'
+NC='\033[0m' # No Color
+
 # exit codes required by main script and any sporned child shells
 ## EXIT CODES:
 export E_UNEXPECTED_BRANCH_ENTERED=10
