@@ -410,8 +410,8 @@ function lib10k_test_file_path_valid_form()
 		#echo "THE FORM OF THE INCOMING PARAMETER IS OF A VALID ABSOLUTE FILE PATH"
 		test_result=0
 	else
-		echo "AN INCOMING PARAMETER WAS SET, BUT WAS NOT A MATCH FOR:" \
-        echo "OUR KNOWN PATH FORM REGEX "$ABS_FILEPATH_FLEX_TS_REGEX"" && echo
+		echo "AN INCOMING PARAMETER WAS SET, BUT WAS NOT A MATCH FOR \ 
+        OUR KNOWN PATH FORM REGEX $ABS_FILEPATH_FLEX_TS_REGEX" && echo
 		echo "Returning with a non-zero test result..."
 		test_result=1
 		return $E_UNEXPECTED_ARG_VALUE
