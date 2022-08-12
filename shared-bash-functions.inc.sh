@@ -58,7 +58,7 @@ function lib10k_check_program_requirements()
 ############################################
 # programs that are not built-ins  must be in the regular user PATH \
 # or use their absolute paths, but these may vary with host system
-# check program dependencies, report only if missing.
+# check program dependencies, report ONLY if missing.
 function lib10k_check_program_dependencies() 
 {
 	declare -a dependencies=( "$@" )
@@ -84,10 +84,8 @@ function lib10k_display_program_header()
 
 	# Display a program header and give user option to leave if here in error:
     echo
-    echo -e "\033[33mWelcome to the \"$program_title\" program\033[0m"
-	echo -e "\033[33mAuthor: $original_author\033[0m" 
-    echo
-
+    echo -e "${BROWN}Welcome to the \"$program_title\" program${NC}"
+	echo -e "${BROWN}Author: $original_author${NC}"  && echo
 	if [ ! $USER = 'root' ]
 	then
 		echo "Hello, ${USER}!" && echo
@@ -99,13 +97,10 @@ function lib10k_display_program_header()
 # give user option to leave if, for example...
 # here in error,
 # or cannot proceed due to some error or failure.
-function lib10k_get_user_permission_to_proceed()
-{
+function lib10k_get_user_permission_to_proceed() {
 	local msg="$1"
-
 	echo -e "$msg"
 	echo "Enter q to quit program NOW, or just press ENTER to continue." && echo
-
 	read last_chance
 	case $last_chance in 
 		[qQ])	#echo && echo "Goodbye! Exiting now..."
@@ -119,8 +114,7 @@ function lib10k_get_user_permission_to_proceed()
 }
 ############################################
 # generalist function to handle user responses and return expected int
-function lib10k_get_user_response()
-{
+function lib10k_get_user_response() {
 	for msg in "$@"
 	do
 		echo -e "$msg"
@@ -146,17 +140,14 @@ function lib10k_get_user_response()
 }
 ############################################
 # generalist function to handle user responses and return expected int
-function lib10k_get_user_response1()
-{
+function lib10k_get_user_response1() {
 	for msg in "$@"
 	do
 		echo -e "$msg"
 		#echo -e "$msg" && prompt="$msg"
 	done
-
 	read user_response
 	#read -p "$prompt" && user_response="${REPLY}"
-
 	# where user just presses ENTER
 	[ -z "$user_response" ] && return 0
 
@@ -173,10 +164,7 @@ function lib10k_get_user_response1()
 }
 ############################################
 # quick check that number of program arguments is within the valid range
-function lib10k_check_no_of_program_args()
-{
-	#echo && echo "Entered into function ${FUNCNAME[0]}" && echo
-	
+function lib10k_check_no_of_program_args() {
 	# establish that number of parameters is valid
 	if [ $actual_no_of_program_parameters -lt $min_expected_no_of_program_parameters -o \
 	$actual_no_of_program_parameters -gt $max_expected_no_of_program_parameters  ]
@@ -184,15 +172,11 @@ function lib10k_check_no_of_program_args()
 		msg="Incorrect number of command line arguments. Exiting now..."
 		lib10k_exit_with_error "$E_INCORRECT_NUMBER_OF_ARGS" "$msg"
 	fi
-	
-	#echo && echo "Leaving from function ${FUNCNAME[0]}" && echo
 }
-
 ############################################
 
 # test whether this host is authorised to run this program
-function lib10k_entry_test()
-{
+function lib10k_entry_test() {
 	local allow=42 # initialise to non-zero fail state
 	# if authorised_host_list is empty, skip this test (allow host entry by default), \
 	# otherwise do this test
@@ -219,8 +203,7 @@ function lib10k_entry_test()
 
 ############################################
 
-function lib10k_display_current_config_file()
-{
+function lib10k_display_current_config_file() {
 	echo && echo CURRENT CONFIGURATION FILE...
 	echo "==========================="
 
@@ -230,8 +213,7 @@ function lib10k_display_current_config_file()
 ############################################
 
 # - trim leading and trailing space characters
-function lib10k_sanitise_input_spaces_both_ends()
-{
+function lib10k_sanitise_input_spaces_both_ends() {
 	test_line="${1}"
 	echo "test line on entering "${FUNCNAME[0]}" is: $test_line" && echo
 
@@ -245,8 +227,7 @@ function lib10k_sanitise_input_spaces_both_ends()
 }
 ############################################
 # for example to prepare 
-function lib10k_remove_trailing_fwd_slash()
-{
+function lib10k_remove_trailing_fwd_slash() {
 	test_line="${1}"
 	echo "test line on entering "${FUNCNAME[0]}" is: $test_line" && echo
 
@@ -261,8 +242,7 @@ function lib10k_remove_trailing_fwd_slash()
 }
 ############################################
 # for example, to prepare file path to append another
-function lib10k_remove_leading_fwd_slash()
-{
+function lib10k_remove_leading_fwd_slash() {
 	test_line="${1}"
 	echo "test line on entering "${FUNCNAME[0]}" is: $test_line" && echo
 
@@ -277,8 +257,7 @@ function lib10k_remove_leading_fwd_slash()
 }
 ############################################
 # 
-function lib10k_make_abs_pathname()
-{
+function lib10k_make_abs_pathname() {
 	test_line="${1}"
 	echo "test line on entering "${FUNCNAME[0]}" is: $test_line" && echo
 
@@ -294,8 +273,8 @@ function lib10k_make_abs_pathname()
 	echo "test line after trim cleanups in "${FUNCNAME[0]}" is: $test_line" && echo
 }
 ############################################
-function lib10k_make_rel_pathname()
-{
+
+function lib10k_make_rel_pathname() {
 	test_line="${1}"
 	echo "test line on entering "${FUNCNAME[0]}" is: $test_line" && echo
 
@@ -319,10 +298,7 @@ function lib10k_make_rel_pathname()
 # 1. directory exists and is not cd-able
 # 2. neither of those, so directory does NOT exist
 # 
-function lib10k_test_dir_path_access()
-{
-	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
-
+function lib10k_test_dir_path_access() {
 	local test_result=
 	local test_dir_fullpath="$1"
 
@@ -347,8 +323,6 @@ function lib10k_test_dir_path_access()
 		return $E_REQUIRED_FILE_NOT_FOUND
 	fi
 
-	# echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
-
 	return "$test_result"
 }
 ############################################
@@ -360,10 +334,7 @@ function lib10k_test_dir_path_access()
 # 1. directory exists and is not cd-able
 # 2. neither of those, so directory does NOT exist
 # 
-function lib10k_test_dir_path_access1()
-{
-	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
-
+function lib10k_test_dir_path_access1() {
 	local test_result=
 	local test_dir_fullpath="$1"
 
@@ -388,17 +359,14 @@ function lib10k_test_dir_path_access1()
 		return $E_REQUIRED_FILE_NOT_FOUND
 	fi
 
-	# echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
-
 	return "$test_result"
 }
+
+############################################
 # test that the parameter we got is of the correct form for an absolute file | sanitised directory path 
 # if this test fails, there's no point doing anything further
 # 
-function lib10k_test_file_path_valid_form()
-{
-	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
-
+function lib10k_test_file_path_valid_form() {
 	local test_result=
 	local test_file_fullpath=$1
 	
@@ -417,8 +385,6 @@ function lib10k_test_file_path_valid_form()
 		return $E_UNEXPECTED_ARG_VALUE
 	fi 
 
-	#echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
-
 	return "$test_result"
 }
 
@@ -427,7 +393,6 @@ function lib10k_test_file_path_valid_form()
 # test for read access to file 
 # 
 function lib10k_test_file_path_access() {
-	#echo && echo "ENTERED INTO FUNCTION ${FUNCNAME[0]}" && echo
 	test_result=
 	test_file_fullpath=$1
 	#echo "test_file_fullpath is set to: $test_file_fullpath"
@@ -443,8 +408,6 @@ function lib10k_test_file_path_access() {
 		echo "Returning from function \"${FUNCNAME[0]}\" with test result code: $E_REQUIRED_FILE_NOT_FOUND"
 		return $E_REQUIRED_FILE_NOT_FOUND
 	fi
-
-	#echo && echo "LEAVING FROM FUNCTION ${FUNCNAME[0]}" && echo
 
 	return "$test_result"
 }
